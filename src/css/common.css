@@ -24,7 +24,8 @@ img {
 	font-size: 18px;
 }
 
-[data-start] {
+[data-start],
+[data-stop] {
 	padding: 5px 0 5px;
 	padding-left: 15px;
 	padding-right: 15px;
