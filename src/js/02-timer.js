@@ -14,6 +14,7 @@ const refs = {
 let selectedDateCopy = null;
 let timerId = null;
 let presentTime = null;
+let isCounts = false;
 
 refs.startBtn.disabled = true;
 
@@ -38,8 +39,13 @@ const options = {
 flatpickr(refs.inputEl, options);
 
 function onClickStartBtn(e) {
+	if (isCounts === true) {
+		Notify.warning("The timer is already counting down");
+		return;
+	}
+	isCounts = true;
 	presentTime = new Date().getTime();
-	timerId = setInterval(updateTime, 1000)
+	timerId = setInterval(updateTime, 1000);
 }
 
 function updateTime()  {
@@ -65,8 +71,9 @@ function convertMs(ms) {
   // Remaining seconds
 	const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 	
-	if (seconds === 0) {
-		Notify.info("Time is up!")
+	if (seconds === 0 && minutes === 0 && hours === 0 && days === 0) {
+		Notify.info("Time is up!");
+		isCounts = false;
 		clearInterval(timerId);
 	}
 
