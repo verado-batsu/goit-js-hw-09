@@ -12,6 +12,8 @@ const refs = {
 	timerSeconds: document.querySelector('[data-seconds]'),
 }
 let selectedDateCopy = null;
+let timerId = null;
+let presentTime = null;
 
 refs.startBtn.disabled = true;
 
@@ -36,14 +38,15 @@ const options = {
 flatpickr(refs.inputEl, options);
 
 function onClickStartBtn(e) {
-	let presentTime = new Date().getTime();
-	setInterval(() => {
-		presentTime += 1000;
-		ms = selectedDateCopy - presentTime;
-		const timer = convertMs(ms);
-		renderingTimer(timer);
-	}, 1000)
-	
+	presentTime = new Date().getTime();
+	timerId = setInterval(updateTime, 1000)
+}
+
+function updateTime()  {
+	presentTime += 1000;
+	let ms = selectedDateCopy - presentTime;
+	const timer = convertMs(ms);
+	renderingTimer(timer);
 }
 
 function convertMs(ms) {
@@ -54,13 +57,18 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  const days = Math.floor(ms / day);
+	const days = Math.floor(ms / day);
   // Remaining hours
-  const hours = Math.floor((ms % day) / hour);
+	const hours = Math.floor((ms % day) / hour);
   // Remaining minutes
-  const minutes = Math.floor(((ms % day) % hour) / minute);
+	const minutes = Math.floor(((ms % day) % hour) / minute);
   // Remaining seconds
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+	const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+	
+	if (seconds === 0) {
+		Notify.info("Time is up!")
+		clearInterval(timerId);
+	}
 
   return { days, hours, minutes, seconds };
 }
